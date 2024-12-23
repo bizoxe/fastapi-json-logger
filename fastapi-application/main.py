@@ -1,13 +1,18 @@
 import uvicorn
-from fastapi import FastAPI
 
-app = FastAPI()
+from create_fastapi_app import create_app
+from api import router as main_api_router
+from core.config import settings
 
-
-@app.get("/")
-def greeting():
-    return {"message": "hello from fastapi"}
-
+app = create_app()
+app.include_router(
+    main_api_router,
+)
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    uvicorn.run(
+        "main:app",
+        host=settings.run.host,
+        port=settings.run.port,
+        reload=True,
+    )

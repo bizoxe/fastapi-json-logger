@@ -21,6 +21,7 @@ class RunConfig(BaseModel):
 
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
+    public: str = "/public"
 
 
 class ApiBaseConfig(BaseModel):
