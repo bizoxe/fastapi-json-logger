@@ -42,7 +42,14 @@ class LoggingBaseConfig(BaseModel):
     ] = "INFO"
     to_file: bool = True
     default_log_cfg_yaml: Path = BASE_DIR / "default_logger_cfg.yaml"
-    sensitive_data: list[str] = ["password", "secret", "token"]
+    patterns: tuple[str, ...] = (
+        "credentials",
+        "authorization",
+        "token",
+        "secret",
+        "password",
+        "access",
+    )
 
 
 class Settings(BaseSettings):
