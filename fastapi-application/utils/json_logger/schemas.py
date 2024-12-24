@@ -14,21 +14,19 @@ from pydantic import (
 logger = logging.getLogger(__name__)
 
 
-def decode_body(field: str, msg: str) -> str:
+def decode_body(field: bytes, msg: str) -> str | None:
     try:
-        if isinstance(field, bytes):
-            decoded = field.decode()
-            return decoded
+        decoded = field.decode()
+        return decoded
     except UnicodeDecodeError:
         logger.exception(msg=msg, exc_info=True)
 
-    if isinstance(field, str):
-        return field
+    return None
 
 
 class JsonLogBase(BaseModel):
     """
-    Main log schema.
+    Basic log schema.
     """
 
     timestamp: datetime
@@ -41,7 +39,7 @@ class JsonLogBase(BaseModel):
     app_version: str
     app_env: str
     duration: int
-    exceptions: list[str] | str = None
+    exceptions: Union[list[str] | str, None] = None
 
 
 class RequestSideSchema(BaseModel):
@@ -54,7 +52,7 @@ class RequestSideSchema(BaseModel):
     request_size: int
     request_content_type: str
     request_headers: dict
-    request_body: Union[Union[str | bytes], None]
+    request_body: bytes
     request_direction: str
     remote_ip: str
     remote_port: int
@@ -64,7 +62,7 @@ class RequestSideSchema(BaseModel):
         mode="before",
     )
     @classmethod
-    def validate_body(cls, field: str) -> str:
+    def validate_body(cls, field: bytes) -> str | None:
         exc_msg = "Failed to decode the request body"
         req_body = decode_body(field=field, msg=exc_msg)
 
@@ -75,14 +73,14 @@ class ResponseSideSchema(BaseModel):
     response_status_code: int
     response_size: int
     response_headers: dict
-    response_body: Union[Union[str | bytes], None]
+    response_body: bytes
 
     @field_validator(
         "response_body",
         mode="before",
     )
     @classmethod
-    def validate_body(cls, field: str) -> str:
+    def validate_body(cls, field: bytes) -> str | None:
         exc_msg = "Failed to decode the response body"
         resp_body = decode_body(field=field, msg=exc_msg)
 
