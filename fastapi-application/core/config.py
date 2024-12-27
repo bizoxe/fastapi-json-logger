@@ -11,7 +11,14 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
+from core.gunicorn.application import get_number_of_workers
+
 BASE_DIR = Path(__file__).parent.parent
+LOG_DEFAULT_FORMAT = (
+    "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
+)
+DATE_FMT = "%Y-%m-%dT%H:%M:%S%z"
+GUNICORN_WORKERS = get_number_of_workers()
 
 
 class RunConfig(BaseModel):
@@ -33,6 +40,8 @@ class ApiBaseConfig(BaseModel):
 
 
 class LoggingBaseConfig(BaseModel):
+    log_format: str = LOG_DEFAULT_FORMAT
+    date_fmt: str = DATE_FMT
     log_dir: Path = BASE_DIR.joinpath("logs")
     log_level: Literal[
         "DEBUG",
@@ -57,6 +66,15 @@ class LoggingBaseConfig(BaseModel):
     )
 
 
+class GunicornConfig(BaseModel):
+    host: str = "0.0.0.0"
+    port: int = 9000
+    workers: int = GUNICORN_WORKERS
+    timeout: int = 900
+    access_log_lvl: str = "INFO"
+    error_log_lvl: str = "INFO"
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
@@ -68,6 +86,7 @@ class Settings(BaseSettings):
         env_prefix="APP_CONFIG__",
     )
     run: RunConfig = RunConfig()
+    gunicorn: GunicornConfig = GunicornConfig()
     log_cfg: LoggingBaseConfig = LoggingBaseConfig()
     api: ApiBaseConfig = ApiBaseConfig()
 
