@@ -1,0 +1,78 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  json:
+    (): utils.json_logger.json_log_formatter.JSONLogFormatter
+
+filters:
+  no_errors:
+    (): utils.json_logger.log_filters.NonErrorFilter
+
+  sensitive_data:
+    (): utils.json_logger.log_filters.SensitiveDataFilter
+
+handlers:
+
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    stream: ext://sys.stdout
+
+  info_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    filename: logs/info_log.jsonl
+    maxBytes: 10485760 # 10MB
+    backupCount: 5
+    encoding: utf8
+    filters:
+      - no_errors
+
+  error_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    filename: logs/error_log.jsonl
+    maxBytes: 10485760 # 10MB
+    backupCount: 5
+    encoding: utf8
+
+  queue_handler:
+    class: utils.json_logger.log_handlers.CustomQueueHandler
+    listener: logging.handlers.QueueListener
+    formatter: json
+    queue:
+      (): queue.Queue
+      maxsize: 1000
+    level: DEBUG
+    handlers:
+      - console
+    filters:
+      - sensitive_data
+    respect_handler_level: true
+
+
+root:
+  level: WARNING
+  handlers:
+    - queue_handler
+  propagate: no
+
+loggers:
+
+  main:
+    level: NOTSET
+    handlers:
+      - queue_handler
+    propagate: false
+
+  uvicorn:
+    level: INFO
+    handlers:
+      - queue_handler
+    propagate: false
+
+  uvicorn.access:
+    level: ERROR
+    handlers:
+      - queue_handler
+    propagate: false
