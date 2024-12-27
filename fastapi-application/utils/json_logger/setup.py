@@ -26,9 +26,8 @@ def setup_logging(
         cfg_yaml: Yaml file with settings for logging.
         env: By default dev.
     """
-    default_cfg_yaml = cfg_yaml
     level = "DEBUG" if env == "dev" else log_level
-    with open(default_cfg_yaml, "rt") as in_f:
+    with open(cfg_yaml, "rt") as in_f:
         config = yaml.safe_load(in_f)
     config["loggers"]["main"]["level"] = level
 

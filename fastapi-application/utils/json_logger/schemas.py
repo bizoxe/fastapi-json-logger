@@ -1,5 +1,5 @@
 """
-Log schemas.
+Logging schemas.
 """
 
 import logging
@@ -14,14 +14,14 @@ from pydantic import (
 logger = logging.getLogger(__name__)
 
 
-def decode_body(field: bytes, msg: str) -> str | None:
+def decode_body(field: bytes, msg: str) -> str:
     try:
         decoded = field.decode()
         return decoded
     except UnicodeDecodeError:
         logger.exception(msg=msg, exc_info=True)
 
-    return None
+    return ""
 
 
 class JsonLogBase(BaseModel):
@@ -52,7 +52,7 @@ class RequestSideSchema(BaseModel):
     request_size: int
     request_content_type: str
     request_headers: dict
-    request_body: bytes
+    request_body: str
     request_direction: str
     remote_ip: str
     remote_port: int
@@ -62,7 +62,7 @@ class RequestSideSchema(BaseModel):
         mode="before",
     )
     @classmethod
-    def validate_body(cls, field: bytes) -> str | None:
+    def validate_body(cls, field: bytes) -> str:
         exc_msg = "Failed to decode the request body"
         req_body = decode_body(field=field, msg=exc_msg)
 
@@ -73,14 +73,14 @@ class ResponseSideSchema(BaseModel):
     response_status_code: int
     response_size: int
     response_headers: dict
-    response_body: bytes
+    response_body: str
 
     @field_validator(
         "response_body",
         mode="before",
     )
     @classmethod
-    def validate_body(cls, field: bytes) -> str | None:
+    def validate_body(cls, field: bytes) -> str:
         exc_msg = "Failed to decode the response body"
         resp_body = decode_body(field=field, msg=exc_msg)
 

@@ -51,6 +51,10 @@ class LoggingBaseConfig(BaseModel):
         "password",
         "access",
     )
+    pass_routes: tuple[str, ...] = (
+        "/openapi.json",
+        "/docs",
+    )
 
 
 class Settings(BaseSettings):
