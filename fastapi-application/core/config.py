@@ -68,7 +68,7 @@ class LoggingBaseConfig(BaseModel):
 
 class GunicornConfig(BaseModel):
     host: str = "0.0.0.0"
-    port: int = 9000
+    port: int = 8080
     workers: int = GUNICORN_WORKERS
     timeout: int = 900
     access_log_lvl: str = "INFO"
