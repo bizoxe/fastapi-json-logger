@@ -11,14 +11,11 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
-from core.gunicorn.application import get_number_of_workers
-
 BASE_DIR = Path(__file__).parent.parent
 LOG_DEFAULT_FORMAT = (
     "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
 )
 DATE_FMT = "%Y-%m-%dT%H:%M:%S%z"
-GUNICORN_WORKERS = get_number_of_workers()
 
 
 class RunConfig(BaseModel):
@@ -69,7 +66,6 @@ class LoggingBaseConfig(BaseModel):
 class GunicornConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8080
-    workers: int = GUNICORN_WORKERS
     timeout: int = 900
     access_log_lvl: str = "INFO"
     error_log_lvl: str = "INFO"
