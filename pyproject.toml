@@ -1,21 +1,17 @@
-[tool.poetry]
+[project]
 name = "async-json-logger-fastapi"
 version = "0.1.0"
-description = ""
-authors = ["alexander <alfacat187@gmail.com>"]
+description = "Asynchronous json logger for FastAPI"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "gunicorn>=23.0.0",
+    "pydantic-settings>=2.9.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-fastapi = {extras = ["standard"], version = "^0.115.6"}
-pydantic-settings = "^2.7.0"
-gunicorn = "^23.0.0"
-
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.10.0"
-mypy = "^1.13.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "mypy>=1.15.0",
+]
