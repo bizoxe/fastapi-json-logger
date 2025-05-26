@@ -2,6 +2,8 @@
 Main application settings.
 """
 
+import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Literal
 
@@ -12,9 +14,7 @@ from pydantic_settings import (
 )
 
 BASE_DIR = Path(__file__).parent.parent
-LOG_DEFAULT_FORMAT = (
-    "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
-)
+LOG_DEFAULT_FORMAT = "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
 DATE_FMT = "%Y-%m-%dT%H:%M:%S%z"
 
 
@@ -49,14 +49,19 @@ class LoggingBaseConfig(BaseModel):
     ] = "INFO"
     to_file: bool = True
     default_log_cfg_yaml: Path = BASE_DIR / "default_logger_cfg.yaml"
-    patterns: tuple[str, ...] = (
+    regex_patterns: Sequence[str | re.Pattern[str]] = (
+        re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"),
+        re.compile(r"(password|token|secret)\s*=\s*([^\s]+)"),
+    )
+    sensitive_keys: Sequence[str] = (
         "credentials",
-        "authorization",
+        "Authorization",
         "token",
         "secret",
         "password",
         "access",
     )
+    mask: str = "****"
     pass_routes: tuple[str, ...] = (
         "/openapi.json",
         "/docs",
