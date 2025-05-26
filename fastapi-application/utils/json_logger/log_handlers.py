@@ -2,8 +2,8 @@
 Log handlers.
 """
 
-from logging.handlers import QueueHandler
 import logging
+from logging.handlers import QueueHandler
 from typing import override
 
 
@@ -19,6 +19,7 @@ class CustomQueueHandler(QueueHandler):
         record.exc_text, record.args the value None.
         The values of these attributes are used later in the logging process.
         """
+
         record = super().prepare(record=record)
 
         record.exc_info = record.exc_info

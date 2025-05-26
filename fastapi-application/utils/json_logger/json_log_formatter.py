@@ -2,19 +2,19 @@
 This module contains a custom JSON formatter for logging.
 """
 
-import logging
-from typing import override
-from datetime import datetime
 import json
+import logging
 import traceback
+from datetime import datetime
+from typing import override
 
-from utils.json_logger.schemas import JsonLogBase
 from core.config import settings
+from utils.json_logger.schemas import JsonLogBase
 
 LOG_LEVELS: dict[int, str] = {
     logging.CRITICAL: "CRITICAL",
     logging.ERROR: "ERROR",
-    logging.WARNING: "WANING",
+    logging.WARNING: "WARNING",
     logging.INFO: "information",
     logging.DEBUG: "debug",
     logging.NOTSET: "trace",
