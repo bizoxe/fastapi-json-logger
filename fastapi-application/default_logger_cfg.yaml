@@ -41,8 +41,8 @@ handlers:
     listener: logging.handlers.QueueListener
     formatter: json
     queue:
-      (): queue.Queue
-      maxsize: 1000
+      (): multiprocessing.Queue
+      maxsize: 10000
     level: DEBUG
     handlers:
       - console
