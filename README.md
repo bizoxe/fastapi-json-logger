@@ -42,7 +42,7 @@ The most straightforward way to do this in a FastAPI application is to call it i
   "level_name": "information",
   "message": "Response with code 200 to 'POST http://0.0.0.0:8080/api/v1/public/user' in 2 ms",
   "source_log": "main",
-  "app_name": "Asynchronous json logger for FastAPI",
+  "app_name": "Json logger for FastAPI",
   "app_version": "1.0",
   "app_env": "dev",
   "duration": 2,
